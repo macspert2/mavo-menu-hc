@@ -14,7 +14,14 @@ defined( 'ABSPATH' ) || exit;
 define( 'MAVO_MENU_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MAVO_MENU_URL', plugin_dir_url( __FILE__ ) );
 
-require_once MAVO_MENU_DIR . 'includes/menu-data.php';
+// Local overrides (e.g. custom menu items) survive git pulls by living in
+// menu-data-local.php, which is never committed to the repository.
+$_mavo_data_file = file_exists( MAVO_MENU_DIR . 'includes/menu-data-local.php' )
+	? MAVO_MENU_DIR . 'includes/menu-data-local.php'
+	: MAVO_MENU_DIR . 'includes/menu-data.php';
+require_once $_mavo_data_file;
+unset( $_mavo_data_file );
+
 require_once MAVO_MENU_DIR . 'includes/menu-render.php';
 
 add_shortcode( 'mavo_menu', 'mavo_menu_render' );

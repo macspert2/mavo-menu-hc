@@ -2,6 +2,10 @@
 /**
  * Hardcoded menu data for all three language versions.
  *
+ * LOCAL OVERRIDES: copy this file to menu-data-local.php (same directory) and
+ * edit that copy instead. The plugin loads menu-data-local.php when present,
+ * so your changes survive a `git pull` that updates menu-data.php.
+ *
  * Structure per item:
  *   type    => 'search' | 'lang'  (special items; omit for normal links)
  *   label   => display text

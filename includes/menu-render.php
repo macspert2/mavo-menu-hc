@@ -254,12 +254,40 @@ function mavo_render_search_item( array $item ): string {
 
 /* ── Language switcher item ────────────────────────────────────────────────── */
 
+/**
+ * Resolve the best URL for a language switcher link.
+ *
+ * On singular posts/pages, tries to find the translated version via Polylang
+ * (pll_get_post). Falls back to the static homepage URL for that language
+ * if Polylang is unavailable, the post type isn't translated, or no
+ * translation exists yet.
+ *
+ * @param string $pll_lang   Two-letter Polylang language slug, e.g. 'fr', 'en', 'de'.
+ * @param string $fallback   Static URL from menu-data.php (e.g. '/en/').
+ */
+function mavo_get_lang_url( string $pll_lang, string $fallback ): string {
+	// Only attempt on single posts / pages
+	if ( ! is_singular() ) return $fallback;
+	if ( ! function_exists( 'pll_get_post' ) ) return $fallback;
+
+	$current_id    = get_queried_object_id();
+	$translated_id = $current_id ? pll_get_post( $current_id, $pll_lang ) : 0;
+
+	if ( ! $translated_id ) return $fallback;
+
+	$url = get_permalink( $translated_id );
+	return $url ?: $fallback;
+}
+
 function mavo_render_lang_item( array $item ): string {
 	$links = '';
 	foreach ( $item['items'] as $lang_item ) {
+		// $lang_item['flag'] holds the two-letter Polylang language slug ('fr','en','de')
+		$url = mavo_get_lang_url( $lang_item['flag'], $lang_item['url'] );
+
 		$links .= sprintf(
 			'<a href="%s" hreflang="%s" lang="%s" class="mavo-lang-link">%s %s</a>',
-			esc_url( $lang_item['url'] ),
+			esc_url( $url ),
 			esc_attr( $lang_item['hreflang'] ),
 			esc_attr( $lang_item['hreflang'] ),
 			mavo_flag_img( $lang_item['flag'], $lang_item['label'] ),
