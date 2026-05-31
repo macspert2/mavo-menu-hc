@@ -31,7 +31,7 @@ function mavo_flag_img( string $code, string $label ): string {
 	$src = $flags[ $code ] ?? '';
 	if ( ! $src ) return '';
 	return sprintf(
-		'<img src="%s" alt="%s" width="16" height="11" loading="lazy">',
+		'<img src="%s" alt="%s" width="16" height="11" loading="lazy" aria-hidden="true">',
 		$src,
 		esc_attr( $label )
 	);
@@ -285,12 +285,15 @@ function mavo_render_lang_item( array $item ): string {
 		// $lang_item['flag'] holds the two-letter Polylang language slug ('fr','en','de')
 		$url = mavo_get_lang_url( $lang_item['flag'], $lang_item['url'] );
 
+		// Flag only for sighted users; the language name is exposed to screen
+		// readers via an .mavo-sr-only span, so the flag image itself stays
+		// decorative (empty alt) to avoid a double announcement.
 		$links .= sprintf(
-			'<a href="%s" hreflang="%s" lang="%s" class="mavo-lang-link">%s %s</a>',
+			'<a href="%s" hreflang="%s" lang="%s" class="mavo-lang-link">%s<span class="mavo-sr-only">%s</span></a>',
 			esc_url( $url ),
 			esc_attr( $lang_item['hreflang'] ),
 			esc_attr( $lang_item['hreflang'] ),
-			mavo_flag_img( $lang_item['flag'], $lang_item['label'] ),
+			mavo_flag_img( $lang_item['flag'], '' ),
 			esc_html( $lang_item['label'] )
 		);
 	}
