@@ -288,16 +288,16 @@ function mavo_render_lang_item( array $item ): string {
 		// $lang_item['flag'] holds the two-letter Polylang language slug ('fr','en','de')
 		$url = mavo_get_lang_url( $lang_item['flag'], $lang_item['url'] );
 
-		// Flag only for sighted users; the language name is exposed to screen
-		// readers via an .mavo-sr-only span, so the flag image itself stays
-		// decorative (empty alt) to avoid a double announcement.
+		// Flag only for sighted users; the language name lives in aria-label,
+		// which doubles as the accessible name (the flag image stays decorative,
+		// empty alt) and as the on-hover/-focus tooltip text (CSS attr(aria-label)).
 		$links .= sprintf(
-			'<a href="%s" hreflang="%s" lang="%s" class="mavo-lang-link">%s<span class="mavo-sr-only">%s</span></a>',
+			'<a href="%s" hreflang="%s" lang="%s" class="mavo-lang-link" aria-label="%s">%s</a>',
 			esc_url( $url ),
 			esc_attr( $lang_item['hreflang'] ),
 			esc_attr( $lang_item['hreflang'] ),
-			mavo_flag_img( $lang_item['flag'], '' ),
-			esc_html( $lang_item['label'] )
+			esc_attr( $lang_item['label'] ),
+			mavo_flag_img( $lang_item['flag'], '' )
 		);
 	}
 	return '<li class="mavo-item mavo-item-lang">' . $links . '</li>';

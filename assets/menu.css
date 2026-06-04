@@ -266,6 +266,7 @@ a.mavo-mega-header:hover { color: var(--mavo-brown); opacity: .85; }
   padding: 0 6px;
 }
 .mavo-lang-link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -276,6 +277,40 @@ a.mavo-mega-header:hover { color: var(--mavo-brown); opacity: .85; }
 }
 .mavo-lang-link:hover { color: var(--mavo-brown); }
 .mavo-lang-link img { vertical-align: middle; }
+
+/* Tooltip: language name on hover / focus — bubble (::after) + arrow (::before) */
+.mavo-lang-link::after,
+.mavo-lang-link::before {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 502;
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .12s;
+}
+.mavo-lang-link::after {
+  content: attr(aria-label);
+  margin-top: 6px;
+  padding: 2px 6px;
+  white-space: nowrap;
+  background: #333;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.4;
+  border-radius: 3px;
+}
+.mavo-lang-link::before {
+  content: "";
+  margin-top: 1px;
+  border: 5px solid transparent;
+  border-bottom-color: #333;
+}
+.mavo-lang-link:is(:hover, :focus-visible)::after,
+.mavo-lang-link:is(:hover, :focus-visible)::before { opacity: 1; }
+/* Rightmost flag: anchor bubble to the right so it grows leftward, not off-screen. */
+.mavo-lang-link:last-child::after { left: auto; right: 0; transform: none; }
 
 /* ── Mobile (≤ 959 px) ──────────────────────────────────────── */
 @media (max-width: 959px) {
