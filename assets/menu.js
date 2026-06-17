@@ -1,7 +1,7 @@
 /**
  * Mavo Menu HC — menu.js
- * Handles: mobile toggle, desktop hover-intent, click-outside, ESC.
- * No jQuery. ~80 lines.
+ * Handles: mobile toggle, desktop hover-intent, search-focus, click-outside, ESC.
+ * No jQuery.
  */
 (function () {
   'use strict';
@@ -87,6 +87,54 @@
     });
   }
 
+  /* ── Search: open dropdown + focus the input on click / Enter ── */
+  function initSearchFocus() {
+    var search = document.querySelector('.mavo-item-search');
+    if (!search) return;
+    var icon  = search.querySelector(':scope > .mavo-link-icon');
+    var input = search.querySelector('.mavo-search-input');
+    if (!icon || !input) return;
+
+    function open() {
+      search.classList.add('is-active');
+      icon.setAttribute('aria-expanded', 'true');
+    }
+    function focusInput() {
+      // The dropdown fades in via `transition: visibility .2s`, so it stays
+      // visibility:hidden (unfocusable) for the first frames after .is-active.
+      // Retry until it's actually focusable — succeeds the instant visibility
+      // flips (and on the first try when already open via hover).
+      var tries = 0;
+      (function attempt() {
+        if (!search.classList.contains('is-active')) return; // closed again — abort
+        input.focus({ preventScroll: true });
+        if (document.activeElement === input || ++tries > 20) return;
+        setTimeout(attempt, 16);
+      })();
+    }
+
+    icon.addEventListener('click', function () {
+      // On mobile the icon also toggles the dropdown (initMobileClick runs
+      // first, since it is bound earlier); only focus when it ends up open.
+      if (isMobile()) {
+        if (search.classList.contains('is-active')) focusInput();
+        return;
+      }
+      open(); // desktop: pin it open (hover may already have) and focus
+      focusInput();
+    });
+
+    // Keyboard activation: the icon is role="button", and hover-only opening
+    // leaves desktop keyboard users with no other way to reach the field.
+    icon.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open();
+        focusInput();
+      }
+    });
+  }
+
   /* ── Close all open menus ──────────────────────────────────── */
   function closeAll() {
     document.querySelectorAll('.mavo-item.is-active, .mavo-sub-item.is-active, .mavo-has-fly2.is-active')
@@ -113,6 +161,7 @@
     initToggle();
     initHover();
     initMobileClick();
+    initSearchFocus(); // after initMobileClick so its click handler binds first
     initClickOutside();
     initEsc();
   });
