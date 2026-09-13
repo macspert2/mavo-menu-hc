@@ -31,7 +31,21 @@
   list-style: none;
   text-decoration: none;
   background: none;
-  outline: none;
+}
+
+/*
+ * `outline: none` used to live in the reset above. It applied to `.mavo-bar *`
+ * — every link in the menu — and put nothing back, so the navigation, which is
+ * also the first thing a keyboard user reaches, had no visible focus at all.
+ *
+ * A reset is the wrong place for it in any case: the whole point of the focus
+ * ring is that it is not decoration.
+ */
+.mavo-nav :is(a, button):focus-visible,
+.mavo-toggle:focus-visible {
+  outline: 2px solid var(--mavo-brown, #886353);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* ── Mobile toggle (hidden on desktop) ──────────────────────── */
