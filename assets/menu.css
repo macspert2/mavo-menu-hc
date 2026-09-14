@@ -407,3 +407,21 @@ a.mavo-mega-header:hover { color: var(--mavo-brown); opacity: .85; }
   .mavo-search-drop { padding: 10px 20px; }
   .mavo-search-input { width: 100%; }
 }
+
+/*
+ * The flyouts slide as they fade. The slide is decoration — the fade alone
+ * still shows the panel opening — so it is dropped for anyone who has asked
+ * for less movement.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .mavo-sub, .mavo-sub2, .mavo-mega, .mavo-search-drop {
+    transition: opacity .15s ease, visibility .15s ease;
+    transform: none;
+  }
+  .mavo-has-fly:hover > .mavo-sub,
+  .mavo-has-fly.is-active > .mavo-sub,
+  .mavo-has-fly2:hover > .mavo-sub2,
+  .mavo-has-fly2.is-active > .mavo-sub2 {
+    transform: none;
+  }
+}

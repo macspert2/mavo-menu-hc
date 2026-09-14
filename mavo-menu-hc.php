@@ -3,7 +3,7 @@
  * Plugin Name: Mavo Menu HC
  * Plugin URI:  https://www.mamanvoyage.com/
  * Description: Hardcoded navigation menu for Maman Voyage — replaces UberMenu with zero DB queries and minimal assets.
- * Version:     1.1.1
+ * Version:     1.1.2
  * Author:      Maman Voyage
  * License:     GPL-2.0+
  * Text Domain: mavo-menu-hc
@@ -38,13 +38,13 @@ function mavo_menu_assets(): void {
 		'mavo-menu',
 		MAVO_MENU_URL . 'assets/menu.css',
 		[],
-		file_exists( $css ) ? filemtime( $css ) : '1.1.1'
+		file_exists( $css ) ? filemtime( $css ) : '1.1.2'
 	);
 	wp_enqueue_script(
 		'mavo-menu',
 		MAVO_MENU_URL . 'assets/menu.js',
 		[],
-		file_exists( $js ) ? filemtime( $js ) : '1.1.1',
+		file_exists( $js ) ? filemtime( $js ) : '1.1.2',
 		true
 	);
 }
