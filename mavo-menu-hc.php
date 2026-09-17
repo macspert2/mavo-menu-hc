@@ -50,13 +50,36 @@ function mavo_menu_assets(): void {
 }
 
 /**
- * Detect current language from the request URI.
+ * Which language's menu to show.
+ *
+ * Polylang first, because it is the authority and this plugin already trusts
+ * it for the language switcher's links (see mavo_get_lang_url()). Deciding the
+ * menu language a second, different way meant the two could disagree: the URI
+ * test only recognises a language by its /en/ or /de/ prefix, so any URL
+ * without one fell back to French. A post preview — /?p=123&preview=true —
+ * is the case that actually showed it, rendering the French menu over an
+ * English article.
+ *
+ * The URI test stays as the fallback for when Polylang is not loaded, and is
+ * still what answers on every ordinary pretty-permalink URL if it is not.
+ *
  * / or anything not prefixed = French (default)
  * /en/ or /en = English
  * /de/ or /de = German
  */
 function mavo_get_lang(): string {
-	$uri = $_SERVER['REQUEST_URI'] ?? '/';
+	if ( function_exists( 'pll_current_language' ) ) {
+		$lang = (string) pll_current_language( 'slug' );
+
+		if ( in_array( $lang, [ 'fr', 'en', 'de' ], true ) ) {
+			return $lang;
+		}
+	}
+
+	$uri = isset( $_SERVER['REQUEST_URI'] )
+		? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
+		: '/';
+
 	if ( str_starts_with( $uri, '/en/' ) || $uri === '/en' ) return 'en';
 	if ( str_starts_with( $uri, '/de/' ) || $uri === '/de' ) return 'de';
 	return 'fr';
