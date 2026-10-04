@@ -117,7 +117,16 @@
       // On mobile the icon also toggles the dropdown (initMobileClick runs
       // first, since it is bound earlier); only focus when it ends up open.
       if (isMobile()) {
-        if (search.classList.contains('is-active')) focusInput();
+        if (search.classList.contains('is-active')) {
+          // The search icon sits in the toggle row, outside the collapsed menu.
+          // Collapse an open menu so the field lands right under that row
+          // instead of at the top of a possibly scrolled-away list.
+          var nav = document.getElementById('mavo-nav');
+          var btn = document.querySelector('.mavo-toggle');
+          if (nav) nav.classList.remove('is-open');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+          focusInput();
+        }
         return;
       }
       open(); // desktop: pin it open (hover may already have) and focus

@@ -9,6 +9,7 @@
   --mavo-fs-bar:     18px;
   --mavo-fs-sub:     16px;
   --mavo-bar-h:      59px;
+  --mavo-toggle-h:   50px;
   --mavo-blue:       #4e74a5;
   --mavo-brown:      #886353;
   --mavo-header-bg:  #b6c6d4;
@@ -56,7 +57,8 @@
   cursor: pointer;
   font: var(--mavo-fs-bar) var(--mavo-font);
   color: var(--mavo-blue);
-  padding: 14px 20px;
+  height: var(--mavo-toggle-h);   /* shared with the mobile search icon */
+  padding: 0 20px;
   background: var(--mavo-bg);
   width: 100%;
   text-align: left;
@@ -331,13 +333,35 @@ a.mavo-mega-header:hover { color: var(--mavo-brown); opacity: .85; }
   .mavo-toggle { display: flex; }
 
   .mavo-nav .mavo-bar {
-    display: none;
     flex-direction: column;
     background: var(--mavo-bg);
     max-height: 80vh;
     overflow-y: auto;
   }
-  .mavo-nav.is-open .mavo-bar { display: flex; }
+  /*
+   * Collapsed: every item but search is hidden; search stays reachable.
+   * Child combinators on purpose — the theme wraps the shortcode in its own
+   * div.mavo-nav, which never gets .is-open, so a descendant selector would
+   * match through it and keep the menu hidden even when open.
+   */
+  .mavo-nav:not(.is-open) > .mavo-bar > .mavo-item:not(.mavo-item-search) { display: none; }
+
+  /*
+   * Search icon lifted out of the list into the toggle row (right edge).
+   * Containing block is nav#mavo-nav (position: relative), which starts
+   * directly below the toggle, so bottom: 100% lines it up with the toggle.
+   * order: -1 puts its dropdown first, right under that row, in every
+   * language — the item is first in FR/DE data but last in EN.
+   */
+  .mavo-item-search { order: -1; }
+  .mavo-item-search > .mavo-link-icon {
+    position: absolute;
+    right: 0;
+    bottom: 100%;
+    height: var(--mavo-toggle-h);
+    padding: 0 20px;
+    border: 0;
+  }
 
   /* All items full-width */
   .mavo-item,

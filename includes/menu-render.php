@@ -67,7 +67,19 @@ function mavo_menu_render( $atts ): string {
 
 	ob_start();
 	?>
-	<button class="mavo-toggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mavo-nav">
+	<?php
+	/*
+	 * No aria-label here on purpose. The <span> below already names this
+	 * button, in the visitor's own language — and an aria-label would
+	 * override it. This carried aria-label="Toggle Menu", hardcoded English,
+	 * so a French or German screen-reader user heard "Toggle Menu" while
+	 * sighted users saw "Menu" / "Menü". Removing it leaves one accessible
+	 * name, already localised, with nothing to keep in sync.
+	 *
+	 * The icon is aria-hidden, so the span is the whole of the name.
+	 */
+	?>
+	<button class="mavo-toggle" aria-expanded="false" aria-controls="mavo-nav">
 		<?= mavo_icon_bars() ?><span><?= esc_html( mavo_toggle_label( $lang ) ) ?></span>
 	</button>
 	<nav id="mavo-nav" class="mavo-nav" role="navigation" aria-label="<?= esc_attr( mavo_aria_label( $lang ) ) ?>">
