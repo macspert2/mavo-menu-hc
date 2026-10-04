@@ -10,6 +10,7 @@
   --mavo-fs-sub:     16px;
   --mavo-bar-h:      59px;
   --mavo-toggle-h:   50px;
+  --mavo-tap:        44px;   /* min touch-target width (mobile icons) */
   --mavo-blue:       #4e74a5;
   --mavo-brown:      #886353;
   --mavo-header-bg:  #b6c6d4;
@@ -350,17 +351,37 @@ a.mavo-mega-header:hover { color: var(--mavo-brown); opacity: .85; }
    * Search icon lifted out of the list into the toggle row (right edge).
    * Containing block is nav#mavo-nav (position: relative), which starts
    * directly below the toggle, so bottom: 100% lines it up with the toggle.
-   * order: -1 puts its dropdown first, right under that row, in every
-   * language — the item is first in FR/DE data but last in EN.
+   * The theme shrink-wraps the menu (div.mavo-nav is position: absolute),
+   * so the toggle reserves the icon's width as right padding — otherwise
+   * the icon lands on top of the "Menu" text.
    */
-  .mavo-item-search { order: -1; }
+  .mavo-toggle { padding-right: var(--mavo-tap); }
   .mavo-item-search > .mavo-link-icon {
     position: absolute;
     right: 0;
     bottom: 100%;
+    width: var(--mavo-tap);
     height: var(--mavo-toggle-h);
-    padding: 0 20px;
+    padding: 0;
+    justify-content: center;
     border: 0;
+  }
+
+  /*
+   * Search field: full viewport width directly under the header row, as an
+   * overlay. In flow it would stretch the shrink-wrapped menu (and the toggle
+   * with it) to the input's min-width, sliding the toggle over the banner.
+   * The menu wrapper is pinned to the right edge, so right: 0 + 100vw spans
+   * the screen. Menu and search are never open together (see menu.js).
+   */
+  .mavo-nav .mavo-search-drop {
+    position: absolute;
+    top: 0;
+    left: auto;   /* .mavo-sub sets left: 0, which would win over right */
+    right: 0;
+    width: 100vw;
+    min-width: 0;
+    box-shadow: var(--mavo-shadow);
   }
 
   /* All items full-width */
@@ -430,6 +451,23 @@ a.mavo-mega-header:hover { color: var(--mavo-brown); opacity: .85; }
   /* Search bar full width */
   .mavo-search-drop { padding: 10px 20px; }
   .mavo-search-input { width: 100%; }
+}
+
+/*
+ * Narrow phones: the theme's banner takes 320px of the header row, leaving
+ * too little room for "☰ Menu" plus the search icon. Show the hamburger icon
+ * alone; the label stays in the DOM as the button's (localised) accessible
+ * name — it is the only one, as the button deliberately has no aria-label.
+ */
+@media (max-width: 479px) {
+  .mavo-toggle {
+    padding-left: calc((var(--mavo-tap) - 18px) / 2);
+  }
+  .mavo-toggle > span {
+    position: absolute; width: 1px; height: 1px;
+    margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap;
+  }
 }
 
 /*
